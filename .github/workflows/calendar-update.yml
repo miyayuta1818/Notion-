@@ -1,0 +1,40 @@
+name: 診療カレンダー自動更新
+
+on:
+  schedule:
+    # 毎週月曜日 午前3時 (JST) = 日曜日 午後6時 (UTC)
+    - cron: '0 18 * * 0'
+  workflow_dispatch: # 手動実行も可能
+
+jobs:
+  update-calendar:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: リポジトリをチェックアウト
+      uses: actions/checkout@v3
+      
+    - name: Python環境をセットアップ
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+        
+    - name: 依存関係をインストール
+      run: |
+        pip install requests beautifulsoup4 pytz
+        
+    - name: 診療カレンダーを更新
+      run: |
+        python notion_auto_update.py
+      env:
+        NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
+        NOTION_PAGE_ID: ${{ secrets.NOTION_PAGE_ID }}
+        
+    - name: 実行結果を通知
+      if: always()
+      run: |
+        if [ $? -eq 0 ]; then
+          echo "✅ 診療カレンダーの更新が完了しました"
+        else
+          echo "❌ 診療カレンダーの更新に失敗しました"
+        fi

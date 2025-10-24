@@ -1,0 +1,6 @@
+{
+  "notion_token": "YOUR_NOTION_INTEGRATION_TOKEN_HERE",
+  "page_id": "YOUR_NOTION_PAGE_ID_HERE",
+  "update_schedule": "weekly",
+  "log_level": "INFO"
+}
